@@ -11,19 +11,16 @@
     >
       <v-icon>mdi-plus</v-icon>
     </v-btn>
-    <FirebaseList />
   </div>
 </template>
 
 <script>
 import CardsCarousel from "../components/CardsCarousel.vue";
-import FirebaseList from "../components/FirebaseList.vue";
 
 export default {
   name: 'Home',
   components: {
     CardsCarousel,
-    FirebaseList
   }
 }
 </script>

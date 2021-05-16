@@ -13,24 +13,24 @@
             {{ card.name }}
           </v-card-title>
           <v-card-title
-            v-show="card.loading === true && card.error === true"
+            v-show="loading === true && error === true"
             class="justify-center"
           >
             <v-progress-circular indeterminate />
           </v-card-title>
           <v-card-title
-            v-show="card.loading === true && card.error === false"
+            v-show="loading === true && error === false"
             class="justify-center"
           >
             <v-progress-circular indeterminate />
           </v-card-title>
           <v-card-title
-            v-show="card.error === true"
+            v-show="error === true"
             class="material-icons justify-center"
           >
             <v-btn
               icon
-              @click="getData(cards)"
+              @click="getData()"
             >
               <v-icon> mdi-wifi-off </v-icon>
             </v-btn>
@@ -39,7 +39,7 @@
 >
             <div
               v-for="(task, idy) in card.tasks"
-              v-show="card.error === false && card.loading === false"
+              v-show="error === false && loading === false"
               :key="idy"
             >
               <v-btn  
@@ -67,34 +67,29 @@
 </template>
 
 <script>
-import axios from "axios";
+import firebase from '../firebase'
+// import axios from "axios";
 export default {
   data() {
     return {
       windowHeight: window.innerHeight,
+          loading: true,
+          error: false,
       cards: {
         available: {
           name: "Доступно",
-          loading: true,
-          error: false,
           tasks: [],
         },
         inWork: {
           name: "В работе",
-          loading: true,
-          error: false,
           tasks: [],
         },
         pending: {
           name: "В ожидании",
-          loading: true,
-          error: false,
           tasks: [],
         },
         finished: {
           name: "Завершено",
-          loading: true,
-          error: false,
           tasks: [],
         },
       },
@@ -107,9 +102,9 @@ export default {
     this.$nextTick(() => {
       window.addEventListener("resize", this.onResize);
     });
-    this.getData(this.cards);
+    this.getData();
     setInterval(() => {
-      this.getData(this.cards);
+      this.getData();
     }, 15000);
   },
   methods: {
@@ -125,21 +120,22 @@ export default {
     onResize() {
       this.windowHeight = window.innerHeight;
     },
-    getData(cards) {
-      Object.keys(cards).forEach(async function (card, index) {
-        cards[card].loading = true;
-        cards[card].error = false;
-        await axios
-          .get("https://node-test.agpk.kz/tasks/" + index)
-          .catch(function (error) {
-            console.log(error);
-            cards[card].error = true;
-          })
-          .then(function (response) {
-            // cards[card].error = true
-            cards[card].loading = false;
-            cards[card].tasks = response.data;
-          });
+    getData() {
+      this.loading = true
+      this.error = false
+      firebase.firestore()
+      .collection('Tasks')
+      .get()
+      .then(snap => {
+        let documents = snap.docs.map(doc => doc.data());
+          this.cards.available.tasks = documents.filter(el => el.status == 0)
+          this.cards.inWork.tasks = documents.filter(el => el.status == 1)
+          this.cards.pending.tasks = documents.filter(el => el.status == 2)
+          this.cards.finished.tasks = documents.filter(el => el.status == 3)
+          this.loading = false
+      }).catch(error => {
+        console.log(error)
+        this.error = true
       });
     },
   },
