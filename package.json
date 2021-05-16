@@ -8,8 +8,14 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
-    "vue": "^2.6.11"
+    "firebase": "^8.6.1",
+    "mdi": "^2.2.43",
+    "mdi-font": "^1.0.1",
+    "vue": "^2.6.11",
+    "vue-router": "^3.5.1",
+    "vuetify": "^2.5.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -26,13 +32,17 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/essential",
+      "plugin:vue/strongly-recommended",
       "eslint:recommended"
     ],
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "vue/no-unused-vars": "warn",
+      "vue/no-use-v-if-with-v-for": "warn",
+      "vue/require-v-for-key": "off"
+    }
   },
   "browserslist": [
     "> 1%",
