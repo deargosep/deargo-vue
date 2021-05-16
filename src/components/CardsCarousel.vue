@@ -41,20 +41,21 @@
               v-show="card.error === false && card.loading === false"
               :key="idy"
             >
-              <v-btn
+              <v-btn  
+                v-if="card.tasks.length > 0"
                 block
                 small
                 @click="openTask(task._id)"
               >
                 <v-card>
-                  <div v-if="card.tasks.length > 0">
+                  <div>
                     {{ task.name }}
                   </div>
-                  <v-list-item v-else>
-                    Пусто
-                  </v-list-item>
                 </v-card>
               </v-btn>
+              <span v-else>
+                Пусто
+              </span>
             </div>
             <v-spacer />
           </v-list>
@@ -69,7 +70,6 @@ import axios from "axios";
 export default {
   data() {
     return {
-      scope: this,
       windowHeight: window.innerHeight,
       cards: {
         available: {

@@ -118,7 +118,7 @@ export default {
       await axios
         .post("https://node-test.agpk.kz/tasks/move/place", {
           _id: scope.$route.params.taskId,
-          status: place,
+          status: place.toString(),
         })
         .then(function () {
         //   console.log(response);
