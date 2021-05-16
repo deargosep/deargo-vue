@@ -35,14 +35,14 @@
               <v-icon> mdi-wifi-off </v-icon>
             </v-btn>
           </v-card-title>
-          <v-list>
+          <v-list            v-if="card.tasks.length > 0"
+>
             <div
               v-for="(task, idy) in card.tasks"
               v-show="card.error === false && card.loading === false"
               :key="idy"
             >
               <v-btn  
-                v-if="card.tasks.length > 0"
                 block
                 small
                 @click="openTask(task._id)"
@@ -53,12 +53,13 @@
                   </div>
                 </v-card>
               </v-btn>
-              <span v-else>
-                Пусто
-              </span>
+     
             </div>
             <v-spacer />
           </v-list>
+          <v-card-title v-else class="justify-center">
+                Пусто
+          </v-card-title>
         </v-card>
       </v-carousel-item>
     </v-carousel>
