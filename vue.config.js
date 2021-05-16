@@ -1,1 +1,7 @@
-module.exports = {}
+module.exports = {
+    pwa: {
+        workboxOptions: {
+            skipWaiting: true
+        }
+    }
+}
