@@ -1,49 +1,43 @@
 <template>
   <div>
-      <v-alert
-  type="error"
-  v-show="error"
->{{ chatHistory.error }}</v-alert>
+    <v-alert type="error" v-show="error">{{ chatError }}</v-alert>
     <v-card>
       <v-list>
-
         <v-list-item
-          v-bind:key="message"
-          v-for="message in chatHistory.messages"
+          v-bind:key="message.text"
+          v-for="message in messages"
           v-bind:class="checkMsg(message.request)"
           class="message"
         >
-            {{ message.text }}
+          {{ message.text }}
         </v-list-item>
-        </v-list>
+      </v-list>
 
-             <v-card-title class="justify-center" v-show="chatHistory.messages.length === 0">
+      <v-card-title class="justify-center" v-show="messages.length === 0">
         New messages will appear here!
       </v-card-title>
-      <v-container v-show="chatHistory.messages.length > 0">
-                <v-card-title
-        v-show="loading === true && error === true"
-        class="justify-center"
-      >
-        <v-progress-circular indeterminate />
-      </v-card-title>
-      <v-card-title
-        v-show="loading === true && error === false"
-        class="justify-center"
-      >
-        <v-progress-circular indeterminate />
-      </v-card-title>
-      <v-card-title
-        v-show="error === true"
-        class="material-icons justify-center"
-      >
-        <v-btn icon @click="clear">
-          <v-icon> mdi-refresh </v-icon>
-        </v-btn>
-      </v-card-title>
-
-
-            </v-container>
+      <v-container v-show="messages.length > 0">
+        <v-card-title
+          v-show="loading === true && error === true"
+          class="justify-center"
+        >
+          <v-progress-circular indeterminate />
+        </v-card-title>
+        <v-card-title
+          v-show="loading === true && error === false"
+          class="justify-center"
+        >
+          <v-progress-circular indeterminate />
+        </v-card-title>
+        <v-card-title
+          v-show="error === true"
+          class="material-icons justify-center"
+        >
+          <v-btn icon @click="clear">
+            <v-icon> mdi-refresh </v-icon>
+          </v-btn>
+        </v-card-title>
+      </v-container>
     </v-card>
     <v-form
       lazy-validation
@@ -59,8 +53,18 @@
         placeholder="Введите текст сообщения"
       >
       </v-text-field>
-      <v-btn v-bind:disabled="loading || request.text==''" type="submit" block> Отправить </v-btn>
+      <v-btn
+        v-bind:disabled="loading || request.text == ''"
+        type="submit"
+        block
+      >
+        Отправить
+      </v-btn>
     </v-form>
+    <v-btn block @click="clearStorage"
+    >
+    Очистить
+    </v-btn>
   </div>
 </template>
 
@@ -77,27 +81,36 @@ export default {
       valid: false,
       rule: [(v) => !!v || "Необходимо заполнить это поле"],
     },
-    chatHistory: {
-messages: [],
-      error: undefined,
-    },
+    messages: [],
+    chatError: undefined,
   }),
   mounted() {
-    //   this.getData()
+    if (localStorage.getItem("messages")) {
+      try {
+        this.messages = JSON.parse(localStorage.getItem("messages"));
+      } catch (error) {
+        this.chatError = error;
+        localStorage.removeItem("messages");
+      }
+    }
   },
   methods: {
-      clear() {
-          this.loading=false;
-          this.error=false
-          this.chatHistory.error=undefined
+      clearStorage() {
+          this.messages = []
+          localStorage.clear()
       },
-      checkMsg(request) {
-          if(request) {
-              return 'accent message-right'
-          } else {
-              return 'accent2 message-left'
-          }
-      },
+    clear() {
+      this.loading = false;
+      this.error = false;
+      this.chatError = undefined;
+    },
+    checkMsg(request) {
+      if (request) {
+        return "accent message-right";
+      } else {
+        return "accent2 message-left";
+      }
+    },
     async getData() {
       if (this.$refs.form.validate()) {
         this.loading = true;
@@ -105,10 +118,10 @@ messages: [],
         var request = this.request.text;
         var scope = this;
         if (request === "" || request === null || request.value === 0) {
-          this.chatHistory.error = "Please enter text in text box below"
+          this.chatError = "Please enter text in text box below";
         } else {
-                    this.request.text = ''
-          this.chatHistory.messages.push({text: request, request: true})
+          this.request.text = "";
+          this.messages.push({ text: request, request: true });
           await axios
             .post(
               "https://api.aicloud.sbercloud.ru/public/v1/public_inference/gpt3/predict",
@@ -117,14 +130,17 @@ messages: [],
               }
             )
             .then(function (response) {
-              scope.chatHistory.messages.push({text: response.data.predictions, request: false});
-            //   console.log(scope.chatHistory.responses);
+              scope.messages.push({
+                text: response.data.predictions,
+                request: false,
+              });
+              localStorage.setItem("messages", JSON.stringify(scope.messages));
               scope.loading = false;
             })
             .catch(function (error) {
-              scope.chatHistory.error = error;
+              scope.chatError = error;
               scope.error = true;
-              scope.loading = false
+              scope.loading = false;
             });
         }
       } else {
@@ -137,8 +153,8 @@ messages: [],
 
 <style>
 .v-list {
-    max-height: 70vh!important;
-    overflow-y: auto;
+  max-height: 70vh !important;
+  overflow-y: auto;
 }
 .message {
   border: 1px solid black;
@@ -150,7 +166,7 @@ messages: [],
   /* background-color: ; */
 }
 .message-right {
-position: relative;
-margin-left: 30%;
+  position: relative;
+  margin-left: 30%;
 }
 </style>
