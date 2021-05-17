@@ -59,7 +59,7 @@
         placeholder="Введите текст сообщения"
       >
       </v-text-field>
-      <v-btn v-bind:disabled="loading" type="submit" block> Отправить </v-btn>
+      <v-btn v-bind:disabled="loading || request.text==''" type="submit" block> Отправить </v-btn>
     </v-form>
   </div>
 </template>
@@ -107,6 +107,7 @@ messages: [],
         if (request === "" || request === null || request.value === 0) {
           this.chatHistory.error = "Please enter text in text box below"
         } else {
+                    this.request.text = ''
           this.chatHistory.messages.push({text: request, request: true})
           await axios
             .post(
