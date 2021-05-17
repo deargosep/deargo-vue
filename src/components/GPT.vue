@@ -7,7 +7,7 @@
           v-bind:key="message.text"
           v-for="message in messages"
           v-bind:class="checkMsg(message.request)"
-          class="message"
+          class="message white--text"
         >
           {{ message.text }}
         </v-list-item>
