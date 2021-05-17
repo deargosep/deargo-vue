@@ -30,10 +30,12 @@ mdi-send
 </template>
 
 <script>
+import axios from 'axios'
   export default {
     name: 'Chat',
 
     data: () => ({
+      chatHistory:[]
     }),
   }
 </script>

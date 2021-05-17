@@ -5,6 +5,7 @@ import Profile from '../views/Profile.vue'
 import Chat from "../components/Chat.vue"
 import NewTask from "../views/NewTask.vue"
 import Task from "../views/Task.vue"
+import GPT from "../components/GPT.vue"
 
 
 Vue.use(VueRouter)
@@ -36,6 +37,11 @@ const routes = [
     name: 'Task',
     component: Task,
     show: false
+  },
+  {
+    path: '/gpt',
+    name: 'GPT',
+    component: GPT,
   },
   // {
   //   path: '/task',
