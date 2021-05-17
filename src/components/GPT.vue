@@ -2,7 +2,7 @@
   <div>
     <v-alert type="error" v-show="error">{{ chatError }}</v-alert>
     <v-card>
-      <v-list>
+      <v-list v-chat-scroll>
         <v-list-item
           v-bind:key="message.text"
           v-for="message in messages"
