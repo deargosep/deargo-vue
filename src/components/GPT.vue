@@ -109,7 +109,7 @@ export default {
       if (request) {
         return "accent message-right";
       } else {
-        return "accent2 message-left";
+        return "accent2 drawer message-left";
       }
     },
     async getData() {
