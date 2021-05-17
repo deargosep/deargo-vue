@@ -51,6 +51,7 @@
         required
         label="Сообщение"
         placeholder="Введите текст сообщения"
+        autocomplete="false"
       >
       </v-text-field>
       <v-btn

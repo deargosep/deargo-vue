@@ -21,11 +21,11 @@ const routes = [
     name: 'Profile',
     component: Profile
   },
-  {
-    path: '/chat',
-    name: 'Chat',
-    component: Chat
-  },
+  // {
+  //   path: '/chat',
+  //   name: 'Chat',
+  //   component: Chat
+  // },
   {
     path: '/task/newtask',
     name: 'NewTask',
