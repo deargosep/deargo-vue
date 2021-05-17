@@ -27,6 +27,7 @@
         <p>
             {{ message }}
         </p>
+        <v-divider/>
       </v-list-item>
     <v-list-item v-for="error in chatHistory.errors" v-bind:key="error">
         {{error}}
