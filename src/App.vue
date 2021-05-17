@@ -3,6 +3,7 @@
     <v-navigation-drawer
       v-model="drawer"
       app
+      color="drawer"
     >
       <v-container fluid>
         <v-list>
@@ -32,9 +33,9 @@
         </v-list>
       </v-container>
     </v-navigation-drawer>
-    <v-app-bar app>
+    <v-app-bar app dark color="primary">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-app-bar-title>{{ currentRouteName }}</v-app-bar-title>
+      <v-toolbar-title>{{ currentRouteName }}</v-toolbar-title>
     </v-app-bar>
     <v-main>
       <v-container fluid>
@@ -63,4 +64,7 @@ export default {
 </script>
 
 <style>
+img {
+  color: #b0bec5
+}
 </style>
