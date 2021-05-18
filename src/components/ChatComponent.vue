@@ -1,10 +1,12 @@
 <template>
-    <div>
+    <div v-bind:inRoom="inRoom">
     <v-alert type="error" v-show="error">{{ chatError }}</v-alert>
     <v-card>
+    <v-card-title>
+    </v-card-title>
       <v-list class="chat-box" v-chat-scroll="{smooth: true}">
         <v-list-item
-          v-bind:key="message.text"
+          v-bind:key="message.id"
           v-for="message in messages"
           v-bind:class="checkMsg(message.request)"
           class="message white--text"
@@ -33,7 +35,7 @@
           v-show="error === true"
           class="material-icons justify-center"
         >
-          <v-btn icon @click="clear">
+          <v-btn icon>
             <v-icon> mdi-refresh </v-icon>
           </v-btn>
         </v-card-title>
@@ -42,7 +44,7 @@
     <v-form
       lazy-validation
       ref="form"
-      @submit.prevent="getData"
+      @submit.prevent="sendMsg"
       v-model="request.valid"
     >
       <v-text-field
@@ -59,24 +61,26 @@
         type="submit"
         block
       >
-        Отправить
+        Удалить чат
       </v-btn>
     </v-form>
-    <v-btn block @click="clearStorage"
-    >
-    Очистить
+    <v-btn @click="deleteChat">
+
     </v-btn>
   </div>
   </template>
 
 <script>
 import  axios from 'axios'
+import {db, Timestamp} from '../db'
   export default {
       props: {
-          data:{}
+        roomId:undefined
       },
       name: 'Chat',
       data: () => ({
+              inRoom: true,
+
     loading: false,
     error: false,
     request: {
@@ -88,67 +92,39 @@ import  axios from 'axios'
     chatError: undefined,
   }),
   mounted() {
-    if (localStorage.getItem("messages")) {
-      try {
-        this.messages = JSON.parse(localStorage.getItem("messages"));
-      } catch (error) {
-        this.chatError = error;
-        localStorage.removeItem("messages");
-      }
+
+    // if (localStorage.getItem("messages")) {
+    //   try {
+    //     this.messages = JSON.parse(localStorage.getItem("messages"));
+    //   } catch (error) {
+    //     this.chatError = error;
+        // localStorage.removeItem("messages");
+      // }
+    // }
+  },
+  watch: {
+    roomId: {
+      immediate: true,
+      handler(roomId) {
+        this.$bind('messages', db.collection('Chats').doc(roomId).collection('messages').orderBy('sent'))
+       }
     }
   },
   methods: {
-      clearStorage() {
-          this.messages = []
-          localStorage.clear()
-      },
-    clear() {
-      this.loading = false;
-      this.error = false;
-      this.chatError = undefined;
-      this.messages.pop()
+    sendMsg() {
+      db.collection('Chats').doc(this.roomId).collection('messages').add({text:this.request.text, author: 'deargo', sent: Timestamp.now() })
+      this.request.text = ''
+    },
+    deleteChat() {
+      db.collection('Chats').doc(this.roomId).set({disabled: true});
+      this.inRoom = false
+      this.$emit('update:inRoom', this.inRoom)
     },
     checkMsg(request) {
       if (request) {
         return "accent message-right";
       } else {
         return "accent2 drawer message-left";
-      }
-    },
-    async getData() {
-      if (this.$refs.form.validate()) {
-        this.loading = true;
-        this.error = false;
-        var request = this.request.text;
-        var scope = this;
-        if (request === "" || request === null || request.value === 0) {
-          this.chatError = "Please enter text in text box below";
-        } else {
-          this.request.text = "";
-          this.messages.push({ text: request, request: true });
-          await axios
-            .post(
-              "https://api.aicloud.sbercloud.ru/public/v1/public_inference/gpt3/predict",
-              {
-                text: request,
-              }
-            )
-            .then(function (response) {
-              scope.messages.push({
-                text: response.predictions,
-                request: false,
-              });
-              localStorage.setItem("messages", JSON.stringify(scope.messages));
-              scope.loading = false;
-            })
-            .catch(function (error) {
-              scope.chatError = error;
-              scope.error = true;
-              scope.loading = false;
-            });
-        }
-      } else {
-        //   console.log('error validating')
       }
     },
   },
