@@ -1,14 +1,8 @@
 <template>
   <div>
-    <v-carousel
-      :hide-delimiters="true"
-      :height="windowHeight"
-    >
-      <v-carousel-item
-        v-for="(card, idx) in cards"
-        :key="idx"
-      >
-        <v-card :class="'card-' + idx">
+    <v-carousel :hide-delimiters="true" :height="windowHeight">
+      <v-carousel-item v-for="card in cards" :key="card.varName">
+        <v-card :class="'card-' + card.varName">
           <v-card-title class="justify-center">
             {{ card.name }}
           </v-card-title>
@@ -28,38 +22,25 @@
             v-show="error === true"
             class="material-icons justify-center"
           >
-            <v-btn
-              icon
-              @click="getData()"
-            >
+            <v-btn icon>
               <v-icon> mdi-wifi-off </v-icon>
             </v-btn>
           </v-card-title>
-          <v-list            v-if="card.tasks.length > 0"
->
+          <v-list v-if="card.tasks.length > 0">
             <div
-              v-for="(task, idy) in card.tasks"
+              v-for="task in card.tasks"
               v-show="error === false && loading === false"
-              :key="idy"
+              :key="task.id"
             >
-              <v-btn  
-                block
-                small
-                @click="openTask(task._id)"
-              >
-                <v-card>
+              <v-btn @click="openTask(task.id)" block small>
                   <div>
                     {{ task.name }}
                   </div>
-                </v-card>
               </v-btn>
-     
             </div>
             <v-spacer />
           </v-list>
-          <v-card-title v-else class="justify-center">
-                Пусто
-          </v-card-title>
+          <v-card-title v-else class="justify-center"> Пусто </v-card-title>
         </v-card>
       </v-carousel-item>
     </v-carousel>
@@ -67,76 +48,79 @@
 </template>
 
 <script>
-import firebase from '../firebase'
-// import axios from "axios";
+import { db } from "../db";
 export default {
   data() {
     return {
+      available: [],
+      inWork: [],
+      pending: [],
+      finished: [],
       windowHeight: window.innerHeight,
-          loading: true,
-          error: false,
+      loading: false,
+      error: false,
       cards: {
-        available: {
-          name: "Доступно",
-          tasks: [],
-        },
-        inWork: {
-          name: "В работе",
-          tasks: [],
-        },
-        pending: {
-          name: "В ожидании",
-          tasks: [],
-        },
-        finished: {
-          name: "Завершено",
-          tasks: [],
-        },
-      },
+       available: {name: "Доступно",
+      tasks: [],
+      varName: 'available'},
+       inWork: {name: "В Работе",
+       tasks: [],
+       varName: 'inWork'}, 
+       pending: {
+         name: "В Ожидании",
+         tasks: [],
+         varName: 'pending'}, finished:{
+           name:"Завершено",
+           tasks: [],
+           varName: 'finished'}},
     };
+  },
+  firestore: {
+    available: db.collection("Tasks").where("status", "==", 0),
+    inWork: db.collection("Tasks").where("status", "==", 1),
+    pending: db.collection("Tasks").where("status", "==", 2),
+    finished: db.collection("Tasks").where("status", "==", 3),
+  },
+   watch: {
+    // whenever question changes, this function will run
+    available: function () {
+      this.cards.available.tasks = this.available
+    },
+    inWork: function () {
+      this.cards.inWork.tasks = this.inWork
+    },
+    pending: function () {
+      this.cards.pending.tasks = this.pending
+    },
+    finished: function () {
+      this.cards.finished.tasks = this.finished
+    }
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.onResize);
   },
   async mounted() {
+    console.log(this.$data);
     this.$nextTick(() => {
       window.addEventListener("resize", this.onResize);
     });
-    this.getData();
-    setInterval(() => {
-      this.getData();
-    }, 15000);
+    // this.getData();
+    // setInterval(() => {
+    //   this.getData();
+    // }, 15000);
   },
   methods: {
-    openTask(id){
-      console.log(this.$router)
+    openTask(id) {
+      console.log(this.$router);
       this.$router.push({
-                path:'/task' + id,
-                })
+        path: "/task" + id,
+      });
     },
     print(el) {
       console.log(el);
     },
     onResize() {
       this.windowHeight = window.innerHeight;
-    },
-    getData() {
-      this.loading = true
-      this.error = false
-      firebase.firestore()
-      .collection('Tasks')
-      .get()
-      .then(snap => {
-        let documents = snap.docs.map(doc => doc.data());
-          this.cards.available.tasks = documents.filter(el => el.status == 0)
-          this.cards.inWork.tasks = documents.filter(el => el.status == 1)
-          this.cards.pending.tasks = documents.filter(el => el.status == 2)
-          this.cards.finished.tasks = documents.filter(el => el.status == 3)
-          this.loading = false
-      }).catch(error => {
-        console.log(error)
-        this.error = true
-      });
     },
   },
 };

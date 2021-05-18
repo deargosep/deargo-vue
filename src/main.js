@@ -7,6 +7,9 @@ import router from './router'
 // import firebase from './firebase'
 import './registerServiceWorker'
 import VueChatScroll from 'vue-chat-scroll'
+import { firestorePlugin } from 'vuefire'
+
+Vue.use(firestorePlugin)
 Vue.use(VueChatScroll)
 
 Vue.config.productionTip = false

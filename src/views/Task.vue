@@ -20,7 +20,6 @@
       >
         <v-btn
           icon
-          @click="getTask"
         >
           <v-icon> mdi-wifi-off </v-icon>
         </v-btn>
@@ -28,10 +27,10 @@
       <div v-show="loading === false && error === false">
         <!-- Actual content -->
         <v-card-title class="justify-center">
-          {{ details[0].name }}
+          {{ details.name }}
         </v-card-title>
         <v-card-subtitle>
-          {{ details[0].description }}
+          {{ details.description }}
         </v-card-subtitle>
         <v-container>
           <v-row>
@@ -91,67 +90,23 @@
 </template>
 
 <script>
-import axios from "axios";
+import {db} from '../db'
 export default {
   name: "Task",
-  props: ["taskId"],
+  props: ['taskId'],
   data: () => ({
     id: "_",
-    details: [
-      {
-        name: "Task",
-        description: "Description",
-        author: "author",
-        status: null,
-      },
-    ],
-
+    details:null,
     error: false,
     loading: true,
   }),
-  async mounted() {
-    this.getTask();
+  firestore: {
+    details: db.collection('Tasks').doc(this.id).get()
   },
+  async beforeMounted() {
+    this.id = this.$route.params.taskId
+    },
   methods: {
-    async move(place) {
-      let scope = this;
-      await axios
-        .post("https://node-test.agpk.kz/tasks/move/place", {
-          _id: scope.$route.params.taskId,
-          status: place.toString(),
-        })
-        .then(function () {
-        //   console.log(response);
-          scope.$router.go(-1)
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },
-    async getTask() {
-      let scope = this;
-      this.id = this.$route.params.taskId;
-    //   console.log(this.$route.params)
-      this.loading = true;
-      await axios
-        .get("https://node-test.agpk.kz/tasks")
-        .catch(function (error) {
-          console.log(error);
-          this.error = true;
-        })
-        .then(function (response) {
-          scope.loading = false;
-          // console.log(response.data)
-          scope.details = response.data.filter(function (task) {
-            if (task._id == scope.$route.params.taskId) return task;
-            // console.log(details._id, scope.$route.params.taskId)
-          });
-
-          // console.log(scope.$route.params)
-          // console.log(scope.task[0])
-        });
-      // console.log(this.details[0])
-    },
   },
 };
 </script>

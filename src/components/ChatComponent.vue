@@ -1,8 +1,8 @@
 <template>
-  <div>
+    <div>
     <v-alert type="error" v-show="error">{{ chatError }}</v-alert>
     <v-card>
-      <v-list v-chat-scroll>
+      <v-list class="chat-box" v-chat-scroll="{smooth: true}">
         <v-list-item
           v-bind:key="message.text"
           v-for="message in messages"
@@ -67,14 +67,16 @@
     Очистить
     </v-btn>
   </div>
-</template>
+  </template>
 
 <script>
-import axios from "axios";
-
-export default {
-  name: "GPT",
-  data: () => ({
+import  axios from 'axios'
+  export default {
+      props: {
+          data:{}
+      },
+      name: 'Chat',
+      data: () => ({
     loading: false,
     error: false,
     request: {
@@ -133,7 +135,7 @@ export default {
             )
             .then(function (response) {
               scope.messages.push({
-                text: response.data.predictions,
+                text: response.predictions,
                 request: false,
               });
               localStorage.setItem("messages", JSON.stringify(scope.messages));
@@ -150,11 +152,11 @@ export default {
       }
     },
   },
-};
-</script>
-
-<style>
-.v-list {
+  }
+  </script>
+  
+  <style>
+.chat-box {
   max-height: 70vh !important;
   overflow-y: auto;
 }
