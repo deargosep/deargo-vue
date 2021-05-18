@@ -40,7 +40,7 @@
             </div>
             <v-spacer />
           </v-list>
-          <v-card-title v-else class="justify-center"> Пусто </v-card-title>
+          <v-card-title v-else class="justify-center"> ... </v-card-title>
         </v-card>
       </v-carousel-item>
     </v-carousel>

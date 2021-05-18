@@ -27,10 +27,13 @@
       <div v-show="loading === false && error === false">
         <!-- Actual content -->
         <v-card-title class="justify-center">
-          {{ details.name }}
+        {{details.name}}
         </v-card-title>
         <v-card-subtitle>
-          {{ details.description }}
+        {{details.description}}
+        </v-card-subtitle>
+        <v-card-subtitle>
+        {{details.author}}
         </v-card-subtitle>
         <v-container>
           <v-row>
@@ -93,19 +96,27 @@
 import {db} from '../db'
 export default {
   name: "Task",
-  props: ['taskId'],
+  // props: ['taskId'],
   data: () => ({
-    id: "_",
-    details:null,
+    id: '',
+    details:[],
     error: false,
-    loading: true,
+    loading: false,
   }),
-  firestore: {
-    details: db.collection('Tasks').doc(this.id).get()
-  },
-  async beforeMounted() {
+ async beforeMount(){
+    const scope = this
     this.id = this.$route.params.taskId
-    },
+    this.details = await db.collection('Tasks').doc(scope.id).get().then((doc) => {
+    if (doc.exists) {
+return doc.data()
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+    }
+}).catch((error) => {
+    console.log("Error getting document:", error);
+});
+  },
   methods: {
   },
 };
