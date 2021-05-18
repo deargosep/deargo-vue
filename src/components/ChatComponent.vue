@@ -61,11 +61,11 @@
         type="submit"
         block
       >
-        Удалить чат
+        Отправить
       </v-btn>
     </v-form>
     <v-btn @click="deleteChat">
-
+скрыть чат
     </v-btn>
   </div>
   </template>
