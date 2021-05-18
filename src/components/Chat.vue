@@ -1,8 +1,6 @@
 <template>
 <div>
   <h1>chat</h1>
-  Debug: inRoom variable
-  <v-switch v-model="inRoom" />
   <div v-if="inRoom">
   <v-btn @click="leave('Fjpx1WZzkZXzwp1EqTzy')" block>Leave</v-btn>
   <chat-component v-model="inRoom" :roomId="room"></chat-component>
