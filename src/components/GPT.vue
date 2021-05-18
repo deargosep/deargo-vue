@@ -104,6 +104,7 @@ export default {
       this.loading = false;
       this.error = false;
       this.chatError = undefined;
+      this.messages.pop()
     },
     checkMsg(request) {
       if (request) {
