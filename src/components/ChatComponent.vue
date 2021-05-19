@@ -8,10 +8,14 @@
         <v-list-item
           v-bind:key="message.id"
           v-for="message in messages"
-          v-bind:class="checkMsg(message.request)"
+          v-bind:class="checkMsg(message)"
           class="message white--text"
         >
           {{ message.text }}
+          <v-list-item-subtitle>
+            {{ message.authorName }}
+            {{ message.authorId }}
+          </v-list-item-subtitle>
         </v-list-item>
       </v-list>
 
@@ -71,6 +75,8 @@
   </template>
 
 <script>
+  import {auth} from '../db'
+
 import  axios from 'axios'
 import {db, Timestamp} from '../db'
   export default {
@@ -88,20 +94,28 @@ import {db, Timestamp} from '../db'
       valid: false,
       rule: [(v) => !!v || "Необходимо заполнить это поле"],
     },
+    user: {
+    uid:'',
+    email: '',
+    name: '',
+    },
     messages: [],
     chatError: undefined,
   }),
   mounted() {
-
-    // if (localStorage.getItem("messages")) {
-    //   try {
-    //     this.messages = JSON.parse(localStorage.getItem("messages"));
-    //   } catch (error) {
-    //     this.chatError = error;
-        // localStorage.removeItem("messages");
-      // }
-    // }
-  },
+    var scope = this
+        auth.onAuthStateChanged(function (user) {
+            if(user) {
+              scope.user.uid = user.uid 
+              scope.user.name = user.displayName
+                scope.user.email = user.email
+                scope.chatError = ''
+            } else {
+                scope.user.email = ''
+                scope.chatError = ''
+            }
+        })
+    },
   watch: {
     roomId: {
       immediate: true,
@@ -112,7 +126,7 @@ import {db, Timestamp} from '../db'
   },
   methods: {
     sendMsg() {
-      db.collection('Chats').doc(this.roomId).collection('messages').add({text:this.request.text, author: 'deargo', sent: Timestamp.now() })
+      db.collection('Chats').doc(this.roomId).collection('messages').add({text:this.request.text, authorName: this.user.name, authorId: this.user.uid, sent: Timestamp.now() })
       this.request.text = ''
     },
     deleteChat() {
@@ -121,7 +135,7 @@ import {db, Timestamp} from '../db'
       this.$emit('update:inRoom', this.inRoom)
     },
     checkMsg(request) {
-      if (request) {
+      if (request.authorId == this.user.uid) {
         return "accent message-right";
       } else {
         return "accent2 drawer message-left";

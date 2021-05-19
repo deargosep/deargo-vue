@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card height="400">
+    <v-card>
       <!-- Loading/Errors -->
       <v-card-title
         v-show="loading === true && error === true"

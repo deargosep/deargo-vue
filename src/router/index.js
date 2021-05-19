@@ -6,7 +6,7 @@ import Chat from "../components/Chat.vue"
 import NewTask from "../views/NewTask.vue"
 import Task from "../views/Task.vue"
 import GPT from "../views/GPT.vue"
-
+import Login from "../views/Login.vue";
 
 Vue.use(VueRouter)
 
@@ -42,6 +42,11 @@ const routes = [
     path: '/gpt',
     name: 'GPT',
     component: GPT,
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
   },
   // {
   //   path: '/task',
