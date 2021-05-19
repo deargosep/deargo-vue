@@ -14,3 +14,4 @@ var firebaseConfig = {
   };
 
 const app = firebase.initializeApp(firebaseConfig)
+app.messaging().getToken({ vapidKey: 'BHYQVKra4t8iS867LxXBDJTjdDph4TsWdZ_YBYkVo2MQM4w6FnLzgHbOJUXooNCiWz_l01BDvFOxeOm1gSYdNj0' })

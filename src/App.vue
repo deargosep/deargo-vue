@@ -63,25 +63,20 @@ export default {
 },
     async mounted () {
       this.routes = this.$router.options.routes
+          console.log('Firebase cloud messaging object', this.$messaging)
+
   },
   created() {
-    const scope = this
-    msg
-    .requestPermission()
-    .then(() => msg.getToken())
-    .then((token) => {
-        console.log(token) // Receiver Token to use in the notification
-        scope.info = token
-    })
-    .catch(function(err) {
-        console.log("Unable to get permission to notify.", err);
-        scope.error = err
-    });
-
-    msg.onMessage(function(payload) {
-    console.log("Message received. ", payload);
-    scope.info = payload
-    });
+    msg.getToken({ vapidKey: 'BHYQVKra4t8iS867LxXBDJTjdDph4TsWdZ_YBYkVo2MQM4w6FnLzgHbOJUXooNCiWz_l01BDvFOxeOm1gSYdNj0' })
+.then((currentToken) => {
+  if (currentToken) {
+    console.log('client token', currentToken)
+  } else {
+    console.log('No registration token available. Request permission to generate one.');
+  }
+}).catch((err) => {
+  console.log('An error occurred while retrieving token. ', err);
+})
 }
 };
 </script>
