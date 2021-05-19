@@ -29,6 +29,7 @@
     </v-dialog>
     <h1>{{ currentRoom.name }}</h1>
     <div v-if="inRoom">
+      <v-btn @click="subscribetoRoom(currentRoom.id)" block>Subscribe</v-btn>
       <v-btn @click="leave('Fjpx1WZzkZXzwp1EqTzy')" block>Leave</v-btn>
       <v-btn @click.stop="dialog.password = true" block>Set Password</v-btn>
       <chat-component
@@ -130,20 +131,21 @@
       <v-card>
         <v-form lazy-validation @submit.prevent="createRoom">
           <v-container>
-          <v-text-field
-            v-model="newRoomName"
-            :rules="[newRoomName.trim() != '']"
-            label="Name"
+            <v-text-field
+              v-model="newRoomName"
+              :rules="[newRoomName.trim() != '']"
+              label="Name"
+            >
+            </v-text-field>
+            <v-text-field
+              v-model="newRoomDescription"
+              label="Description (optional)"
+            >
+            </v-text-field>
+            <v-btn :disabled="newRoomName == ''" block type="submit"
+              >Create a room</v-btn
+            ></v-container
           >
-          </v-text-field>
-          <v-text-field
-            v-model="newRoomDescription"
-            label="Description (optional)"
-          >
-          </v-text-field>
-          <v-btn :disabled="newRoomName == ''" block type="submit"
-            >Create a room</v-btn
-          ></v-container>
         </v-form></v-card
       >
     </div>
@@ -151,15 +153,20 @@
 </template>
 
 <script>
+import axios from 'axios'
 import ChatComponent from "@/components/ChatComponent.vue";
-import { db, FieldValue } from "../db";
+import { db, auth, FieldValue } from "../db";
 export default {
   components: {
     ChatComponent,
   },
-  mounted() {},
   methods: {
-    setPassword() {
+    subscribetoRoom(roomId) {
+      axios.get('https://localhost:5000/send?uid=' + auth.currentUser.uid + '&roomId=' + roomId).then(response => {
+        console.log
+      })
+    },
+     setPassword() {
       const scope = this;
       if (this.dialog.passwordString != "")
         db.collection("Chats")
