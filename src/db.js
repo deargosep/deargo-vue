@@ -20,9 +20,9 @@ export const db = firebaseApp.firestore()
 
 // Export types that exists in Firestore
 // This is not always necessary, but it's used in other examples
-const { Timestamp, GeoPoint } = firebase.firestore
+const { Timestamp, GeoPoint, FieldValue } = firebase.firestore
 export const auth = firebaseApp.auth()
-export { Timestamp, GeoPoint }
+export { Timestamp, GeoPoint, FieldValue }
 
 // if using Firebase JS SDK < 5.8.0
 // db.settings({ timestampsInSnapshots: true })
