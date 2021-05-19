@@ -39,6 +39,8 @@
     </v-app-bar>
     <v-main>
       <v-container fluid>
+        <v-alert v-show="info" type="info">{{info}}</v-alert>
+        <v-alert v-show="error" type="error">{{error}}</v-alert>
         <router-view />
       </v-container>
     </v-main>
@@ -46,20 +48,41 @@
 </template>
 
 <script>
-// import messaging from './firebase'
+import {msg} from './db'
 export default {
   data: () => ({
     drawer: false,
     routes: [],
+    error: undefined,
+    info: undefined
   }),
   computed: {
     currentRouteName() {
         return this.$route.name;
     }
 },
-    mounted () {
+    async mounted () {
       this.routes = this.$router.options.routes
-  }
+  },
+  created() {
+    const scope = this
+    msg
+    .requestPermission()
+    .then(() => msg.getToken())
+    .then((token) => {
+        console.log(token) // Receiver Token to use in the notification
+        scope.info = token
+    })
+    .catch(function(err) {
+        console.log("Unable to get permission to notify.", err);
+        scope.error = err
+    });
+
+    msg.onMessage(function(payload) {
+    console.log("Message received. ", payload);
+    scope.info = payload
+    });
+}
 };
 </script>
 

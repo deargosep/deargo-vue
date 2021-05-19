@@ -100,7 +100,6 @@ export default {
     window.removeEventListener("resize", this.onResize);
   },
   async mounted() {
-    console.log(this.$data);
     this.$nextTick(() => {
       window.addEventListener("resize", this.onResize);
     });

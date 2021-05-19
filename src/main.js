@@ -8,7 +8,7 @@ import router from './router'
 import './registerServiceWorker'
 import VueChatScroll from 'vue-chat-scroll'
 import { firestorePlugin } from 'vuefire'
-
+// import msg from './db'
 Vue.use(firestorePlugin)
 Vue.use(VueChatScroll)
 

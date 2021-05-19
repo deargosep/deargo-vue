@@ -1,6 +1,7 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/auth'
+import "firebase/messaging";
 
 var firebaseConfig = {
   apiKey: "AIzaSyAUqIkkhNLja9rPIo1VxJHzfS8GOAqytmg",
@@ -15,13 +16,13 @@ var firebaseConfig = {
 
 // Get a Firestore instance
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
-
+export const msg = firebaseApp.messaging()
 export const db = firebaseApp.firestore()
+export const auth = firebaseApp.auth()
 
 // Export types that exists in Firestore
 // This is not always necessary, but it's used in other examples
 const { Timestamp, GeoPoint, FieldValue } = firebase.firestore
-export const auth = firebaseApp.auth()
 export { Timestamp, GeoPoint, FieldValue }
 
 // if using Firebase JS SDK < 5.8.0
