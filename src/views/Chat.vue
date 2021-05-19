@@ -21,7 +21,7 @@
   <h3>
   Logged as: {{userEmail}} ({{userName}})
   </h3>
-    <v-btn @click="logout">
+    <v-btn block @click="logout">
       Logout
   </v-btn>
   <Rooms />
