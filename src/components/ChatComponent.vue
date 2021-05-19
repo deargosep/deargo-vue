@@ -11,11 +11,13 @@
           v-bind:class="checkMsg(message)"
           class="message white--text"
         >
+        <v-list-item-content>
           {{ message.text }}
           <v-list-item-subtitle>
             {{ message.authorName }}
             {{ message.authorId }}
           </v-list-item-subtitle>
+        </v-list-item-content>
         </v-list-item>
       </v-list>
 
@@ -68,6 +70,7 @@
         Отправить
       </v-btn>
     </v-form>
+    <br />
     <v-btn @click="deleteChat">
 скрыть чат
     </v-btn>

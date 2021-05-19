@@ -2,11 +2,10 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Profile from '../views/Profile.vue'
-import Chat from "../components/Chat.vue"
 import NewTask from "../views/NewTask.vue"
 import Task from "../views/Task.vue"
 import GPT from "../views/GPT.vue"
-import Login from "../views/Login.vue";
+import Chat from "../views/Chat.vue";
 
 Vue.use(VueRouter)
 
@@ -20,11 +19,6 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: Profile
-  },
-  {
-    path: '/chat',
-    name: 'Chat',
-    component: Chat
   },
   {
     path: '/task/newtask',
@@ -44,9 +38,9 @@ const routes = [
     component: GPT,
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: Login,
+    path: '/chat',
+    name: 'Chat',
+    component: Chat,
   },
   // {
   //   path: '/task',

@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h1>Общальная</h1>
+    <h1>{{currentRoom.name}}</h1>
     <div v-if="inRoom">
       <v-btn @click="leave('Fjpx1WZzkZXzwp1EqTzy')" block>Leave</v-btn>
-      <chat-component v-model="inRoom" :roomId="room"></chat-component>
+      <chat-component v-model="inRoom" :roomId="currentRoom.id"></chat-component>
     </div>
     <div v-else>
       <v-form lazy-validation @submit.prevent="createRoom">
@@ -23,18 +23,18 @@
         >
       </v-form>
       <br />
+                <h1>Группы</h1>
+
       <v-list>
-        <v-container>
-          <h1>Группы</h1>
           <!--<v-progress-circular indeterminate v-show="!loaded && error != ''"/>-
         <v-alert type="error" v-show="error">{{error}}</v-alert>-->
           <div v-if="chats.length > 0">
             <v-list-item
-              v-if="!room.disabled"
               v-for="room in chats"
+              v-if="!room.disabled"
               v-bind:key="room.id"
             >
-              <v-list-item-content @click="gotoRoom(room.id)">
+              <v-list-item-content @click="gotoRoom(room.id, room.name)">
                 <v-list-item-title>
                   <div v-if="room.name != ''">{{ room.name }}</div>
                   <div v-else>Пустое название</div>
@@ -48,21 +48,20 @@
                 </v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
-                <v-btn @click="hideRoom(room.id)" icon>
+                <v-btn v-show="false" @click="hideRoom(room.id)" icon>
                   <v-icon>mdi-delete</v-icon>
                 </v-btn>
               </v-list-item-action>
             </v-list-item>
           </div>
           <v-list-item-title v-else> Нет активных чатов </v-list-item-title>
-        </v-container>
-        <v-list-group>
+        <v-list-group v-show="false">
           <v-list-item
-              v-if="room.disabled"
               v-for="room in chats"
+              v-if="room.disabled"
               v-bind:key="room.id"
             >
-              <v-list-item-content @click="gotoRoom(room.id)">
+              <v-list-item-content @click="gotoRoom(room.id, room.name)">
                 <v-list-item-title>
                   <div v-if="room.name != ''">{{ room.name }}</div>
                   <div v-else>Пустое название</div>
@@ -109,13 +108,15 @@ export default {
         })
         .catch((err) => console.log(err));
     },
-    gotoRoom(roomId) {
+    gotoRoom(roomId, roomName) {
       this.inRoom = true;
-      this.room = roomId;
+      this.currentRoom.id = roomId;
+      this.currentRoom.name = roomName
     },
     leave(roomId) {
       this.inRoom = false;
-      this.room = undefined;
+      this.currentRoom.id = '';
+      this.currentRoom.name = ''
     },
   },
   data: () => ({
@@ -123,7 +124,10 @@ export default {
     newRoomDescription: "",
     chats: [],
     inRoom: false,
-    room: undefined,
+    currentRoom: {
+      name: '',
+      id: '',
+    },
     loaded: false,
     error: "",
   }),
