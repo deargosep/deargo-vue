@@ -82,7 +82,9 @@ export default {
 </script>
 
 <style>
-img {
-  color: #b0bec5
+@media (min-width: 1400px) {
+  .container{
+  width: 60vw;
+}
 }
 </style>
