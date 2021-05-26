@@ -70,10 +70,10 @@
         Отправить
       </v-btn>
     </v-form>
-    <br />
+    <!-- <br />
     <v-btn @click="deleteChat">
 скрыть чат
-    </v-btn>
+    </v-btn> -->
   </div>
   </template>
 
